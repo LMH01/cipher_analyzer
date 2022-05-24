@@ -1,37 +1,17 @@
 use std::collections::HashMap;
 use adventofcode_lmh01_lib::read_file;
 
+/// This program can decipher the input text if the correct mapping is provided in the file cipher_coding.txt
+///
+/// The encoding of the file is as followed:
+/// I|O
+///
+/// So if lets say a gets mapped to z the entry in the `cipher_coding.txt` file should be `a|z`.
+
 fn main() {
     let input = read_file("input/main.txt").unwrap();
-    let mut decryption_pairs = HashMap::new();
 
-    decryption_pairs.insert('n', 'a');
-    decryption_pairs.insert('o', 'b');
-    decryption_pairs.insert('p', 'c');
-    decryption_pairs.insert('q', 'd');
-    decryption_pairs.insert('r', 'e');
-    decryption_pairs.insert('s', 'f');
-    decryption_pairs.insert('t', 'g');
-    decryption_pairs.insert('u', 'h');
-    decryption_pairs.insert('v', 'i');
-    decryption_pairs.insert('x', 'k');
-    decryption_pairs.insert('y', 'l');
-    decryption_pairs.insert('z', 'm');
-    decryption_pairs.insert('a', 'n');
-    decryption_pairs.insert('b', 'o');
-    decryption_pairs.insert('c', 'p');
-    decryption_pairs.insert('e', 'r');
-    decryption_pairs.insert('f', 's');
-    decryption_pairs.insert('g', 't');
-    decryption_pairs.insert('h', 'u');
-    decryption_pairs.insert('i', 'v');
-    decryption_pairs.insert('j', 'w');
-    decryption_pairs.insert('l', 'y');
-    decryption_pairs.insert('m', 'z');
-    decryption_pairs.insert('ä', 'ä');
-    decryption_pairs.insert('ö', 'ö');
-    decryption_pairs.insert('ü', 'ü');
-
+    let decryption_pairs = read_cipher_coding();
     for string in input {
         let mut current_decrypted = String::new();
         for char in string.to_lowercase().chars() {
@@ -44,10 +24,30 @@ fn main() {
     }
 }
 
+/// Returns the deciphered character for the input character.
 fn replace_char(input: char, decryption_pairs: &HashMap<char, char>) -> char {
     return if decryption_pairs.contains_key(&input) {
         *decryption_pairs.get(&input).unwrap()
     } else {
         ' '
     }
+}
+
+/// Reads the cipher mapping from the `cipher_coding.txt` file in the `input` directory.
+fn read_cipher_coding() -> HashMap<char, char>{
+    let mut map = HashMap::new();
+    let cipher_coding = read_file("input/cipher_coding.txt").unwrap();
+    for string in cipher_coding {
+        let mut key = ' ';
+        let mut value= ' ';
+        for (i, char) in string.to_lowercase().chars().enumerate() {
+            match i {
+                0 => {key = char},
+                2 => {value = char},
+                _ => {}
+            }
+        }
+        map.insert(key, value);
+    }
+    map
 }
